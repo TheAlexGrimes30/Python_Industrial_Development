@@ -1,0 +1,10 @@
+.verify-venv/
+.verify-uv/
+.venv/
+__pycache__/
+.pytest_cache/
+uv.lock
+pyproject.pip.toml
+build/
+dist/
+*.egg-info/

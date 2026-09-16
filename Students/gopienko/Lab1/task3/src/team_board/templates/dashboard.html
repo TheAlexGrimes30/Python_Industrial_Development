@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Доска команды</title>
+  <style>
+    :root {
+      color: #38445c;
+      background: #f8f6ff;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 20rem;
+      background: radial-gradient(circle at top right, #ffe8f0 0, transparent 30rem), #f8f6ff;
+    }
+
+    main {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 3.5rem 1.25rem;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      letter-spacing: -.06em;
+      margin-bottom: .45rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: .9rem;
+    }
+
+    .eyebrow {
+      color: #756e9f;
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .intro {
+      color: #687188;
+      margin-bottom: 2.5rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin: 0 0 2.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, .78);
+      border: 1px solid #e5e1f1;
+      border-radius: 1.1rem;
+      box-shadow: 0 .6rem 1.5rem rgba(83, 70, 128, .07);
+      padding: 1.1rem;
+    }
+
+    .metric {
+      background: linear-gradient(145deg, #fff 0%, #f1efff 100%);
+      min-height: 7.8rem;
+    }
+
+    .metric strong,
+    .sprint-name {
+      color: #6975a7;
+      display: block;
+      font-size: .82rem;
+      font-weight: 750;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      color: #3f4567;
+      display: block;
+      font-size: 2rem;
+      font-weight: 750;
+      letter-spacing: -.06em;
+      line-height: 1.15;
+      margin-top: .55rem;
+    }
+
+    .metric-status {
+      color: #626b82;
+      font-size: .93rem;
+      line-height: 1.6;
+      margin-top: .45rem;
+    }
+
+    .section-heading {
+      align-items: baseline;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+
+    .section-heading p {
+      color: #7c8497;
+      font-size: .9rem;
+      margin-bottom: .9rem;
+    }
+
+    .sprints {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sprint {
+      background: #fffdf8;
+      border-color: #f0e7d4;
+    }
+
+    .sprint.active {
+      background: linear-gradient(135deg, #edfaf2, #fffdf8);
+      border-color: #9ad6b2;
+    }
+
+    .sprint p {
+      color: #687188;
+      line-height: 1.75;
+      margin: .8rem 0 0;
+    }
+
+    .filter {
+      align-items: end;
+      background: #f0edf9;
+      border-radius: 1.1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .8rem;
+      margin: 0 0 2.5rem;
+      padding: 1rem;
+    }
+
+    .field {
+      display: grid;
+      flex: 1 1 11rem;
+      font-size: .78rem;
+      font-weight: 700;
+      gap: .35rem;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    select,
+    button {
+      border-radius: .65rem;
+      font: inherit;
+    }
+
+    select {
+      background: #fff;
+      border: 1px solid #dfd9ed;
+      color: #4e566d;
+      padding: .7rem .75rem;
+    }
+
+    button {
+      background: #7a72b5;
+      border: 0;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 750;
+      padding: .78rem 1.15rem;
+    }
+
+    button:hover {
+      background: #675e9e;
+    }
+
+    .table-wrap {
+      background: rgba(255, 255, 255, .8);
+      border: 1px solid #e5e1f1;
+      border-radius: 1.1rem;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      min-width: 44rem;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #eeeaf5;
+      padding: .9rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f5f2fc;
+      color: #777093;
+      font-size: .75rem;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill {
+      border-radius: 999px;
+      display: inline-block;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: .25rem .55rem;
+      white-space: nowrap;
+    }
+
+    .status-todo {
+      background: #fff0d7;
+      color: #9a6c25;
+    }
+
+    .status-in-progress {
+      background: #e4efff;
+      color: #4870a5;
+    }
+
+    .status-done {
+      background: #def5e5;
+      color: #397a55;
+    }
+
+    .priority-high {
+      color: #b85c79;
+      font-weight: 700;
+    }
+
+    .priority-medium {
+      color: #997432;
+      font-weight: 700;
+    }
+
+    .priority-low {
+      color: #5b7f93;
+      font-weight: 700;
+    }
+
+    .workload {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .65rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .workload li {
+      background: #e6f5f3;
+      border-radius: 999px;
+      color: #477b78;
+      padding: .45rem .75rem;
+    }
+
+    dialog {
+      background: #fffdfd;
+      border: 1px solid #ebddea;
+      border-radius: 1.25rem;
+      box-shadow: 0 1.25rem 4rem rgba(76, 52, 92, .2);
+      color: #465069;
+      max-width: 25rem;
+      padding: 0;
+      text-align: center;
+    }
+
+    dialog::backdrop {
+      background: rgba(73, 61, 104, .25);
+      backdrop-filter: blur(3px);
+    }
+
+    .dialog-content {
+      padding: 2rem;
+    }
+
+    .dialog-content h2 {
+      color: #d35e8f;
+      font-size: 1.5rem;
+      line-height: 1.45;
+    }
+
+    .dialog-content button {
+      background: #d983a4;
+      margin-top: .4rem;
+    }
+
+    .dialog-content button:hover {
+      background: #bd6d8d;
+    }
+
+    @media (max-width: 48rem) {
+      main {
+        padding-top: 2.25rem;
+      }
+
+      .cards,
+      .sprints {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 32rem) {
+
+      .cards,
+      .sprints {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        align-items: start;
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <p class="eyebrow">Team board</p>
+    <h1>Доска команды</h1>
+    <p class="intro">Спокойный обзор задач, сроков и ритма команды.</p>
+    <section class="cards" aria-label="Сводка">
+      <div class="card metric"><strong>Выполнено</strong><span class="metric-value">{{ completion }}%</span></div>
+      <div class="card metric"><strong>Просрочено</strong><span class="metric-value">{{ overdue }}</span></div>
+      <div class="card metric"><strong>Средняя загрузка</strong><span class="metric-value">{{ average_load
+          }}</span><span class="metric-status">задач на человека</span></div>
+      <div class="card metric"><strong>Статусы</strong>
+        <p class="metric-status">К плану: {{ status_totals.todo }}<br>В работе: {{ status_totals['in progress']
+          }}<br>Готово: {{ status_totals.done }}</p>
+      </div>
+    </section>
+
+    <div class="section-heading">
+      <h2>Спринты</h2>
+      <p>Ближайшие контрольные точки</p>
+    </div>
+    <section class="cards sprints">
+      {% for item in sprints %}
+      <div class="card sprint {% if item.active %}active{% endif %}">
+        <strong class="sprint-name">{{ item.name }}</strong>
+        <p>До конца: {{ item.days_left }} дн.<br>Контрольная точка: {{ item.review_date }}</p>
+      </div>
+      {% endfor %}
+    </section>
+
+    <div class="section-heading">
+      <h2>Фильтр задач</h2>
+    </div>
+    <form class="filter" method="get">
+      <label class="field">Статус
+        <select name="status">
+          <option value="">Все статусы</option>
+          {% for value, label in [('todo', 'todo'), ('in progress', 'в работе'), ('done', 'готово')] %}
+          <option value="{{ value }}" {% if selected.status==value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">Исполнитель
+        <select name="assignee">
+          <option value="">Все исполнители</option>
+          {% for value in assignees %}
+          <option value="{{ value }}" {% if selected.assignee==value %}selected{% endif %}>{{ value }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">Спринт
+        <select name="sprint">
+          <option value="">Все спринты</option>
+          {% for item in sprints %}
+          <option value="{{ item.name }}" {% if selected.sprint==item.name %}selected{% endif %}>{{ item.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit">Применить</button>
+    </form>
+
+    <div class="section-heading">
+      <h2>Задачи</h2>
+      <p>По сроку выполнения</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Задача</th>
+            <th>Статус</th>
+            <th>Исполнитель</th>
+            <th>Спринт</th>
+            <th>Приоритет</th>
+            <th>Срок</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for task in tasks %}
+          <tr>
+            <td>{{ task.title }}</td>
+            <td><span class="pill status-{{ task.status|replace(' ', '-') }}">{{ task.status }}</span></td>
+            <td>{{ task.assignee }}</td>
+            <td>{{ task.sprint }}</td>
+            <td class="priority-{{ task.priority }}">{{ task.priority }}</td>
+            <td>{{ task.due_date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="section-heading">
+      <h2>Загрузка команды</h2>
+    </div>
+    <ul class="workload">
+      {% for name, count in workload.items() %}
+      <li>{{ name }}: {{ count }} задач</li>
+      {% endfor %}
+    </ul>
+  </main>
+
+  <dialog id="welcome-dialog" aria-labelledby="welcome-title">
+    <div class="dialog-content">
+      <p class="eyebrow">Добро пожаловать</p>
+      <h2 id="welcome-message">Добро пожаловать</h2>
+      <button type="button" id="close-welcome">Спасибо</button>
+    </div>
+  </dialog>
+  <script>
+    const welcomeDialog = document.querySelector("#welcome-dialog");
+    const welcomeMessage = document.querySelector("#welcome-message");
+    const filter = document.querySelector(".filter");
+    const filtered = sessionStorage.getItem("team-board-filtering");
+    const compliments = [
+      "Есть! Самое важное сейчас - ты уже не просто читаешь про Python, а реально пишешь код. Поздравляю!",
+      "Хороший старт! Первый рабочий результат всегда важнее десятка просмотренных туториалов.",
+      "Отлично получилось! Теперь у тебя есть стартовая точка, а я могу усложнять задачи)))",
+      "Первый шаг закрыт! Именно из таких небольших задач потом складывается профессионализм.",
+      "Супер! Запомни это ощущение: сначала задача кажется непонятной, потом разбираешься - и она работает.",
+      "Молодец! Код заработал, но ещё важнее, что ты сам прошёл путь от задачи до решения.",
+      "Отлично сделалано! Продолжай в том же режиме. Сначала думаем, потом пробуем, ошибаемся, разбираемся и улучшаем.",
+      "Отличный первый коммит на этом пути! Через несколько заданий будет интересно посмотреть назад и увидеть, насколько сильно изменился твой код.",
+    ];
+
+    sessionStorage.removeItem("team-board-filtering");
+    if (welcomeDialog?.showModal && welcomeMessage && !filtered) {
+      welcomeMessage.textContent = compliments[Math.floor(Math.random() * compliments.length)];
+      welcomeDialog.showModal();
+    }
+
+    filter?.addEventListener("submit", () => sessionStorage.setItem("team-board-filtering", "true"));
+    document.querySelector("#close-welcome")?.addEventListener("click", () => welcomeDialog.close());
+    welcomeDialog?.addEventListener("click", (event) => {
+      if (event.target === welcomeDialog) welcomeDialog.close();
+    });
+  </script>
+</body>
+
+</html>
